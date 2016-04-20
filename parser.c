@@ -80,8 +80,7 @@ void parse_file ( char * filename,
   FILE *f;
   char line[256];
   struct matrix * tmp;
-  struct stack * st;
-  st = new_stack();
+  struct stack * st = new_stack();
   double angle;
   color g;
 
@@ -158,7 +157,8 @@ void parse_file ( char * filename,
       //line[strlen(line)-1]='\0';      
       sscanf(line, "%lf %lf %lf", &x, &y, &z);
       tmp = make_scale(x, y, z);
-      matrix_mult(tmp, st->data[ st->top ]);
+      matrix_mult(st->data[ st->top ], tmp);
+      copy_matrix(tmp, st->data[ st->top ]);
       //print_matrix(transform);
     }
     else if ( strncmp(line, "translate", strlen(line)) == 0 ) {
@@ -167,7 +167,8 @@ void parse_file ( char * filename,
       //      line[strlen(line)-1]='\0';      
       sscanf(line, "%lf %lf %lf", &x, &y, &z);
       tmp = make_translate(x, y, z);
-      matrix_mult(tmp, transform);
+      matrix_mult(st->data[ st->top ], tmp);
+      copy_matrix(tmp, st->data[ st->top ]);
       //print_matrix(transform);
     }
     else if ( strncmp(line, "xrotate", strlen(line)) == 0 ) {
@@ -176,7 +177,8 @@ void parse_file ( char * filename,
       sscanf(line, "%lf", &angle);
       angle = angle * (M_PI / 180);
       tmp = make_rotX( angle);
-      matrix_mult(tmp, transform);
+      matrix_mult(st->data[ st->top ], tmp);
+      copy_matrix(tmp, st->data[ st->top ]);
     }
     else if ( strncmp(line, "yrotate", strlen(line)) == 0 ) {
       //printf("ROTATE!\n");
@@ -184,7 +186,8 @@ void parse_file ( char * filename,
       sscanf(line, "%lf", &angle);
       angle = angle * (M_PI / 180);
       tmp = make_rotY( angle);
-      matrix_mult(tmp, transform);
+      matrix_mult(st->data[ st->top ], tmp);
+      copy_matrix(tmp, st->data[ st->top ]);
     }
     else if ( strncmp(line, "zrotate", strlen(line)) == 0 ) {
       //printf("ROTATE!\n");
@@ -192,7 +195,8 @@ void parse_file ( char * filename,
       sscanf(line, "%lf", &angle);
       angle = angle * (M_PI / 180);
       tmp = make_rotZ( angle);
-      matrix_mult(tmp, transform);
+      matrix_mult(st->data[ st->top ], tmp);
+      copy_matrix(tmp, st->data[ st->top ]);
     }
     else if ( strncmp(line, "push", strlen(line)) == 0 ) {
       push(st);
