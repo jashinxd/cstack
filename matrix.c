@@ -52,6 +52,10 @@ void free_matrix(struct matrix *m) {
 }
 
 
+void clear_matrix(struct matrix *m) {
+  m->lastcol = 0;
+}
+
 /*======== void grow_matrix() ==========
 Inputs:  struct matrix *m
          int newcols 

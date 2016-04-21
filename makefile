@@ -26,5 +26,9 @@ gmath.o: gmath.c gmath.h matrix.h
 
 stack.o: matrix.c matrix.h stack.h
 	$(CC) $(CFLAGS) -c stack.c
+
+run:
+	./main myscript
+
 clean:
 	rm *.o *~

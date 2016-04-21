@@ -1,0 +1,35 @@
+push
+yrotate
+30
+translate
+175 300 0
+bezier
+-20 50 25 200 170 200 220 50
+push
+xrotate
+90
+zrotate
+90
+translate
+0 20 0
+torus
+0 0 25 50
+translate
+0 -240 0
+torus
+0 0 25 50
+pop
+push
+translate
+100 -300 0
+box
+-50 0 0 100 -200 -30
+push
+translate
+0 300 0
+sphere
+0 0 125
+display
+save
+headphones.png
+quit

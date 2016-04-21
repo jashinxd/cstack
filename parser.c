@@ -87,7 +87,9 @@ void parse_file ( char * filename,
   g.red = 0;
   g.green = 255;
   g.blue = 0;
+
   
+
   clear_screen(s);
 
   if ( strcmp(filename, "stdin") == 0 ) 
@@ -107,14 +109,22 @@ void parse_file ( char * filename,
       //      printf("\t%s", line);
       //line[strlen(line)-1]='\0';
       sscanf(line, "%lf %lf %lf %lf %lf %lf", &x, &y, &z, &x1, &y1, &z1);
-      add_edge(pm, x, y, z, x1, y1, z1);
+      tmp = new_matrix(4, 4);
+      add_edge(tmp, x, y, z, x1, y1, z1);
+      matrix_mult(st->data[ st->top ], tmp);
+      draw_lines(tmp, s, g);
+      clear_matrix(tmp);      
       // printf( "%lf %lf %lf %lf %lf %lf\n", x, y, z, x1, y1, z1);
     }
     else if ( strncmp(line, "circle", strlen(line)) == 0 ) {
       //printf("CIRCLE\n");
       fgets(line, 255, f);
       sscanf(line, "%lf %lf %lf", &x, &y, &z);
-      add_circle(pm, x, y, z, 0.01);
+      tmp = new_matrix(4, 4);
+      add_circle(tmp, x, y, z, 0.01);
+      matrix_mult(st->data[ st->top ], tmp);
+      draw_lines(tmp, s, g);
+      clear_matrix(tmp);
       //printf( "%lf %lf %lf\n", x, y, z);
     }    
     else if ( strncmp(line, "bezier", strlen(line)) == 0 ) {
@@ -122,7 +132,11 @@ void parse_file ( char * filename,
       fgets(line, 255, f);
       sscanf(line, "%lf %lf %lf %lf %lf %lf %lf %lf",
 	     &x1, &y1, &x2, &y2, &x3, &y3, &x4, &y4);
-      add_curve(pm, x1, y1, x2, y2, x3, y3, x4, y4, 0.01, BEZIER_MODE );
+      tmp = new_matrix(4, 4);
+      add_curve(tmp, x1, y1, x2, y2, x3, y3, x4, y4, 0.01, BEZIER_MODE );
+      matrix_mult(st->data[ st->top ], tmp);
+      draw_lines(tmp, s, g);
+      clear_matrix(tmp);
       //printf( "%lf %lf %lf\n", x, y, z);
     }    
     else if ( strncmp(line, "hermite", strlen(line)) == 0 ) {
@@ -130,25 +144,38 @@ void parse_file ( char * filename,
       fgets(line, 255, f);
       sscanf(line, "%lf %lf %lf %lf %lf %lf %lf %lf",
 	     &x1, &y1, &x2, &y2, &x3, &y3, &x4, &y4);
-      add_curve(pm, x1, y1, x2, y2, x3, y3, x4, y4, 0.01, HERMITE_MODE );
+      tmp = new_matrix(4, 4);
+      add_curve(tmp, x1, y1, x2, y2, x3, y3, x4, y4, 0.01, HERMITE_MODE );
+      matrix_mult(st->data[ st->top ], tmp);
+      draw_lines(tmp, s, g);
+      clear_matrix(tmp);
       //printf( "%lf %lf %lf\n", x, y, z);
     }
     else if ( strncmp(line, "box", strlen(line)) == 0 ) {
       fgets(line, 255, f);
       sscanf(line, "%lf %lf %lf %lf %lf %lf", &x, &y, &z, &x1, &y1, &z1);
       add_box(pm, x, y, z, x1, y1, z1);
+      matrix_mult(st->data[ st->top ], pm);
+      draw_polygons(pm, s, g);
+      clear_matrix(pm);
       // printf( "%lf %lf %lf %lf %lf %lf\n", x, y, z, x1, y1, z1);
     }
     else if (strncmp(line, "sphere", strlen(line)) == 0 ) {
       fgets(line, 255, f);
       sscanf(line, "%lf %lf %lf", &x, &y, &z);
       add_sphere(pm, x, y, z, 10);
+      matrix_mult(st->data[ st->top ], pm);
+      draw_polygons(pm, s, g);
+      clear_matrix(pm);
       //printf( "%lf %lf %lf\n", x, y, z);
     }
     else if (strncmp(line, "torus", strlen(line)) == 0 ) {
       fgets(line, 255, f);
       sscanf(line, "%lf %lf %lf %lf", &x, &y, &z, &z1);
       add_torus(pm, x, y, z, z1, 10);
+      matrix_mult(st->data[ st->top ], pm);
+      draw_polygons(pm, s, g);
+      clear_matrix(pm);
       //printf( "%lf %lf %lf\n", x, y, z);
     }
     else if ( strncmp(line, "scale", strlen(line)) == 0 ) {
@@ -214,16 +241,18 @@ void parse_file ( char * filename,
       matrix_mult(transform, pm);
     }
     else if ( strncmp(line, "display", strlen(line)) == 0 ) {
-      clear_screen(s);
-      draw_polygons(pm, s, g);
+      //clear_screen(s);
+      //draw_polygons(pm, s, g);
       display(s);
+      //clear_screen(s);
     }
     else if ( strncmp(line, "save", strlen(line)) == 0 ) {
       fgets(line, 255, f);
-      // line[strlen(line)-1] = '\0';
-      clear_screen(s);
-      draw_polygons(pm, s, g);
+      line[strlen(line)-1] = '\0';
+      //clear_screen(s);
+      //draw_polygons(pm, s, g);
       save_extension(s, line);
+      clear_screen(s);
     }
     else if ( strncmp(line, "clear", strlen(line)) == 0 ) {
       pm->lastcol = 0;
